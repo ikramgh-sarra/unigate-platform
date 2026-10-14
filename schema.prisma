@@ -11,151 +11,144 @@ enum UserRole {
   ADMIN
   STUDENT
 }
-
 enum Level {
   L1
   L2
   L3
 }
-
 enum applicationStatus {
   EN_ATTENTE
   EN_COURS
   VALIDE
   REFUSE
 }
-
 enum DecisionOutcome {
   ADMIS
   AJOURNE
   DETTE
 }
-
-model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
+model User{
+  id String @id @default(cuid())
+  email String @unique
   passwordHash String
-  role         UserRole @default(STUDENT)
-  isActive     Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  studentProfile Student?
-  adminProfile   Admin?
-  auditLogs      AuditLog[]
-}
-
-model Admin {
-  id           String @id @default(cuid())
-  userId       String @unique
-  agentId      String @unique
-  passwordHash String
-  firstName    String
-  lastName     String
-  service      String
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model Student {
-  id         String   @id @default(cuid())
-  userId     String   @unique
-  matricule  String?  @unique
-  nin        String   @unique
-  firstName  String
-  lastName   String
-  birthDate  DateTime
-  birthPlace String
-  gender     String
-  adress     String
-  phone      String
-
-  level Level @default(L1)
-
-  choiceL1 String?
-  choiceL2 String?
-  choiceL3 String?
-
-  stream       String?
-  bacAverage   Float?
-  mathGrade    Float?
-  scienceGrade Float?
-  physicsGrade Float?
-
-  credits Int?    @default(0)
-  status  String? @default("En cours de traitement")
-
+  role UserRole @default(STUDENT)
+  isActive Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  applications    Application[]
+  studentProfile Student?
+  adminProfile Admin?
+  auditLogs AuditLog[]
+
+}
+model Admin{
+  id String @id @default(cuid())
+  userId String @unique
+  agentId String @unique
+  passwordHash String
+  firstName String
+  lastName String
+  service String
+
+  user User @relation(fields: [userId],references: [id],onDelete:Cascade)
+}
+model Student{
+  id String @id @default(cuid())
+  userId String @unique
+  matricule String? @unique
+  nin String @unique
+  firstName String
+  lastName String
+  birthDate DateTime
+  birthPlace String
+  gender String
+  adress String
+  phone String
+
+  level Level @default(L1)
+
+ choiceL1 String?
+ choiceL2 String?
+ choiceL3 String?
+
+ stream String?
+ bacAverage Float?
+ mathGrade Float?
+ scienceGrade Float?
+ physicsGrade Float?
+ 
+ credits Int?     @default(0)
+ status String?  @default("En cours de traitement")
+
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+
+ user User @relation(fields: [userId],references: [id],onDelete:Cascade)
+ applications Application[]
   academicHistory AcademicRecord[]
 }
 
-model Departement {
-  id          String  @id @default(cuid())
-  name        String  @unique
-  code        String? @unique
+model Departement{
+  id String @id @default(cuid())
+  name String @unique
+  code String? @unique
   description String?
 
   parentId String?
-  parent   Departement?  @relation("DeptHierarchy", fields: [parentId], references: [id])
+  parent Departement? @relation("DeptHierarchy", fields: [parentId],references: [id])
   children Departement[] @relation("DeptHierarchy")
 
   applications Application[]
+
 }
-
 model Application {
-  id            String            @id @default(cuid())
-  studentId     String
+  id String @id @default(cuid())
+  studentId String
   departementId String?
-  academicYear  String
-  targetLevel   Level
-  status        applicationStatus @default(EN_ATTENTE)
+  academicYear String
+  targetLevel Level 
+  status applicationStatus @default(EN_ATTENTE)
 
-  weightedAverage Float?
+  weightedAverage Float? 
 
-  creditsObtained Int?    @default(0)
-  isDebtStudent   Boolean @default(false)
+  creditsObtained Int? @default(0)
+  isDebtStudent Boolean @default(false)
 
-  adminNotes  String?
+  adminNotes String?
   validatedAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  student     Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  departement Departement? @relation(fields: [departementId], references: [id])
+  student Student @relation(fields: [studentId],references: [id],onDelete: Cascade)
+  departement Departement? @relation(fields: [departementId],references: [id])
 
-  @@index([studentId, status])
+  @@index([studentId,status])
 }
 
 model AcademicRecord {
-  id            String          @id @default(cuid())
-  studentId     String
-  year          String
-  level         Level
+  id String @id @default(cuid())
+  studentId String
+  year String 
+  level Level
   annualAverage Float?
-  decision      DecisionOutcome
+  decision DecisionOutcome
 
-  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  student Student @relation(fields: [studentId],references: [id],onDelete: Cascade)
 }
-
 model SystemConfig {
-  id               Int      @id @default(1)
-  currentYear      String   @default("2025-2026")
-  minBacAverage    Float    @default(10.0)
-  registrationOpen Boolean  @default(true)
-  updatedAt        DateTime @updatedAt
+  id Int @id @default(1)
+  currentYear String @default("2025-2026")
+  minBacAverage Float @default(10.0)
+  registrationOpen Boolean @default(true)
+  updatedAt DateTime @updatedAt
 }
-
 model AuditLog {
-  id        String   @id @default(cuid())
-  userId    String
-  action    String
-  details   String?
+  id String @id @default(cuid())
+  userId String
+  action String
+  details String?
   timestamp DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId],references: [id])
 }

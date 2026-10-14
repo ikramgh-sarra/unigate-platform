@@ -1,0 +1,6 @@
+{
+  "name": "UniGate: Plateforme d'Admissions Universitaires",
+  "description": "Système de gestion des admissions avec portails étudiant et administratif, suivi de dossier en temps réel et aide à la décision.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
